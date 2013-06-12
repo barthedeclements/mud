@@ -180,13 +180,21 @@ def Drop(person, thing=None):
   return person
 
 def Climb(user, direction=None):
+  havehook=0
   if direction is None:
     sys.stdout.write('Climb what? \n')
   elif direction in user.room.hidden_exits:
-    sys.stdout.write('You climb %s.\n' %direction)
-    PrintRoom(user.room.hidden_exits[direction])
-    user.room = user.room.hidden_exits[direction]
-    return user
+    for v in user.inventory.values():
+      for item in v:
+        if item.name == 'hook':
+          havehook=1
+    if havehook==0:
+      sys.stdout.write('It seems you lack the proper tools to climb.\n')
+    elif havehook==1:  
+      sys.stdout.write('You use your hook to climb %s.\n' %direction)
+      PrintRoom(user.room.hidden_exits[direction])
+      user.room = user.room.hidden_exits[direction]
+      return user
   else:
     sys.stdout.write('You can\'t climb %s.\n' %direction)
   return user
